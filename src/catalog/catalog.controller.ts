@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { CatalogService } from './catalog.service';
 import { Product } from './entities/product.entity';
 
@@ -9,9 +9,15 @@ import { Product } from './entities/product.entity';
 export class CatalogController {
   constructor(private readonly catalogService: CatalogService) {}
 
-  /** FDD-7: List the available products of the catalog */
+  /**
+   * FDD-7: List the available products of the catalog
+   * FDD-8: Search products by category (when ?category= is provided)
+   */
   @Get('products')
-  list(): Product[] {
+  list(@Query('category') category?: string): Product[] {
+    if (category) {
+      return this.catalogService.searchByCategory(category);
+    }
     return this.catalogService.listAvailable();
   }
 }

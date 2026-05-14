@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CatalogService } from './catalog.service';
 
 /**
- * Unit tests — FDD-7: List the available products of the catalog
+ * Unit tests — Catalog Service features
+ *  - FDD-7: List the available products of the catalog
+ *  - FDD-8: Search products by category
  */
 describe('CatalogService', () => {
   let service: CatalogService;
@@ -35,6 +37,19 @@ describe('CatalogService', () => {
     it('does not include unavailable products', () => {
       const result = service.listAvailable();
       expect(result.find((p) => p.id === 'p3')).toBeUndefined();
+    });
+  });
+
+  describe('FDD-8: searchByCategory()', () => {
+    it('returns products matching the given category exactly', () => {
+      const result = service.searchByCategory('electronics');
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.every((p) => p.category === 'electronics')).toBe(true);
+    });
+
+    it('returns an empty list when category does not exist', () => {
+      const result = service.searchByCategory('non-existing-category');
+      expect(result).toEqual([]);
     });
   });
 });
