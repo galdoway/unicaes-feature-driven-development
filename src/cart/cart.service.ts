@@ -8,9 +8,9 @@ import { AddItemDto } from './dto/add-item.dto';
  * Cart Service — Cart Management area (Epic FDD-3).
  *
  * Features owned by this service:
- *  - FDD-10: Add a product to the cart (implemented in this PR)
+ *  - FDD-10: Add a product to the cart
  *  - FDD-11: Remove a product from the cart (pending)
- *  - FDD-12: Calculate the subtotal of the cart (pending)
+ *  - FDD-12: Calculate the subtotal of the cart (implemented in this PR)
  */
 @Injectable()
 export class CartService {
@@ -59,5 +59,22 @@ export class CartService {
       );
     }
     return cart;
+  }
+
+  /**
+   * FDD-12: Calculate the subtotal of the cart
+   *
+   * Acceptance criteria:
+   *  - Sums (price × quantity) for each item in the cart
+   *  - Returns 0 if the cart is empty
+   *  - Result has 2-decimal precision
+   */
+  calculateSubtotal(cartId: string): number {
+    const cart = this.getOrCreate(cartId);
+    const subtotal = cart.items.reduce(
+      (acc, item) => acc + item.lineSubtotal(),
+      0,
+    );
+    return Number(subtotal.toFixed(2));
   }
 }

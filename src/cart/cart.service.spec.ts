@@ -6,6 +6,7 @@ import { CatalogService } from '../catalog/catalog.service';
 /**
  * Unit tests — Cart Service
  *  - FDD-10: Add a product to the cart
+ *  - FDD-12: Calculate the subtotal of the cart
  */
 describe('CartService', () => {
   let service: CartService;
@@ -46,6 +47,30 @@ describe('CartService', () => {
       expect(() =>
         service.addItem('cart-4', { productId: 'invalid', quantity: 1 }),
       ).toThrow(NotFoundException);
+    });
+  });
+
+  describe('FDD-12: calculateSubtotal()', () => {
+    it('returns 0 for an empty cart', () => {
+      const subtotal = service.calculateSubtotal('empty-cart');
+      expect(subtotal).toBe(0);
+    });
+
+    it('sums price × quantity across all items', () => {
+      // p1 = 1299.99, p2 = 25.5
+      service.addItem('cart-sum', { productId: 'p1', quantity: 1 });
+      service.addItem('cart-sum', { productId: 'p2', quantity: 2 });
+      const subtotal = service.calculateSubtotal('cart-sum');
+      // 1299.99 + (25.5 × 2) = 1350.99
+      expect(subtotal).toBe(1350.99);
+    });
+
+    it('returns a number with 2-decimal precision', () => {
+      service.addItem('cart-precision', { productId: 'p2', quantity: 3 });
+      const subtotal = service.calculateSubtotal('cart-precision');
+      // 25.5 × 3 = 76.5
+      expect(subtotal).toBe(76.5);
+      expect(Number.isFinite(subtotal)).toBe(true);
     });
   });
 });

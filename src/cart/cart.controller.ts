@@ -20,4 +20,10 @@ export class CartController {
   addItem(@Param('id') id: string, @Body() dto: AddItemDto): Cart {
     return this.cartService.addItem(id, dto);
   }
+
+  /** FDD-12: Calculate the subtotal of the cart */
+  @Get(':id/subtotal')
+  subtotal(@Param('id') id: string): { subtotal: number } {
+    return { subtotal: this.cartService.calculateSubtotal(id) };
+  }
 }
