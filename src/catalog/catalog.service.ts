@@ -5,8 +5,8 @@ import { Product } from './entities/product.entity';
  * Catalog Service — Catalog Management area (Epic FDD-2).
  *
  * Features owned by this service:
- *  - FDD-7: List the available products of the catalog (implemented in this PR)
- *  - FDD-8: Search products by category (pending)
+ *  - FDD-7: List the available products of the catalog
+ *  - FDD-8: Search products by category (implemented in this PR)
  *  - FDD-9: View product details (pending)
  */
 @Injectable()
@@ -51,5 +51,16 @@ export class CatalogService {
    */
   listAvailable(): Product[] {
     return this.products.filter((p) => p.available);
+  }
+
+  /**
+   * FDD-8: Search products by category
+   *
+   * Acceptance criteria:
+   *  - Filters products by exact category match
+   *  - Returns empty list if the category does not exist
+   */
+  searchByCategory(category: string): Product[] {
+    return this.products.filter((p) => p.category === category);
   }
 }
