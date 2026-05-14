@@ -1,10 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 import { CatalogService } from './catalog.service';
 
 /**
  * Unit tests — Catalog Service features
  *  - FDD-7: List the available products of the catalog
  *  - FDD-8: Search products by category
+ *  - FDD-9: View product details
  */
 describe('CatalogService', () => {
   let service: CatalogService;
@@ -50,6 +52,20 @@ describe('CatalogService', () => {
     it('returns an empty list when category does not exist', () => {
       const result = service.searchByCategory('non-existing-category');
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('FDD-9: findById()', () => {
+    it('returns the full product detail when the id exists', () => {
+      const product = service.findById('p1');
+      expect(product.id).toBe('p1');
+      expect(product.name).toBe('Laptop Pro 14');
+    });
+
+    it('throws NotFoundException when the product does not exist', () => {
+      expect(() => service.findById('non-existing-id')).toThrow(
+        NotFoundException,
+      );
     });
   });
 });

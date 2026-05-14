@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from './entities/product.entity';
 
 /**
@@ -6,8 +6,8 @@ import { Product } from './entities/product.entity';
  *
  * Features owned by this service:
  *  - FDD-7: List the available products of the catalog
- *  - FDD-8: Search products by category (implemented in this PR)
- *  - FDD-9: View product details (pending)
+ *  - FDD-8: Search products by category
+ *  - FDD-9: View product details (implemented in this PR)
  */
 @Injectable()
 export class CatalogService {
@@ -62,5 +62,20 @@ export class CatalogService {
    */
   searchByCategory(category: string): Product[] {
     return this.products.filter((p) => p.category === category);
+  }
+
+  /**
+   * FDD-9: View the details of a product
+   *
+   * Acceptance criteria:
+   *  - Returns the full product detail by id
+   *  - Throws NotFoundException (HTTP 404) if the product does not exist
+   */
+  findById(id: string): Product {
+    const product = this.products.find((p) => p.id === id);
+    if (!product) {
+      throw new NotFoundException(`Product ${id} not found`);
+    }
+    return product;
   }
 }

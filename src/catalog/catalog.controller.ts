@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { CatalogService } from './catalog.service';
 import { Product } from './entities/product.entity';
 
@@ -19,5 +19,11 @@ export class CatalogController {
       return this.catalogService.searchByCategory(category);
     }
     return this.catalogService.listAvailable();
+  }
+
+  /** FDD-9: View the details of a product */
+  @Get('products/:id')
+  findOne(@Param('id') id: string): Product {
+    return this.catalogService.findById(id);
   }
 }
