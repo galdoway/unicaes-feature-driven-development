@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CatalogService } from '../catalog/catalog.service';
 import { Cart } from './entities/cart.entity';
 import { CartItem } from './entities/cart-item.entity';
@@ -9,8 +13,8 @@ import { AddItemDto } from './dto/add-item.dto';
  *
  * Features owned by this service:
  *  - FDD-10: Add a product to the cart
- *  - FDD-11: Remove a product from the cart (pending)
- *  - FDD-12: Calculate the subtotal of the cart (implemented in this PR)
+ *  - FDD-11: Remove a product from the cart (implemented in this PR)
+ *  - FDD-12: Calculate the subtotal of the cart
  */
 @Injectable()
 export class CartService {
@@ -58,6 +62,23 @@ export class CartService {
         }),
       );
     }
+    return cart;
+  }
+
+  /**
+   * FDD-11: Remove a product from the cart
+   *
+   * Acceptance criteria:
+   *  - Removes the product if it exists in the cart
+   *  - Throws NotFoundException (HTTP 404) if it does not
+   */
+  removeItem(cartId: string, productId: string): Cart {
+    const cart = this.getOrCreate(cartId);
+    const index = cart.items.findIndex((i) => i.productId === productId);
+    if (index === -1) {
+      throw new NotFoundException(`Product ${productId} not in cart`);
+    }
+    cart.items.splice(index, 1);
     return cart;
   }
 

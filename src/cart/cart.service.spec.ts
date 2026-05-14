@@ -6,6 +6,7 @@ import { CatalogService } from '../catalog/catalog.service';
 /**
  * Unit tests — Cart Service
  *  - FDD-10: Add a product to the cart
+ *  - FDD-11: Remove a product from the cart
  *  - FDD-12: Calculate the subtotal of the cart
  */
 describe('CartService', () => {
@@ -47,6 +48,23 @@ describe('CartService', () => {
       expect(() =>
         service.addItem('cart-4', { productId: 'invalid', quantity: 1 }),
       ).toThrow(NotFoundException);
+    });
+  });
+
+  describe('FDD-11: removeItem()', () => {
+    it('removes an item that exists in the cart', () => {
+      service.addItem('cart-rm', { productId: 'p1', quantity: 1 });
+      service.addItem('cart-rm', { productId: 'p2', quantity: 1 });
+      const cart = service.removeItem('cart-rm', 'p1');
+      expect(cart.items).toHaveLength(1);
+      expect(cart.items[0].productId).toBe('p2');
+    });
+
+    it('throws NotFoundException if the product is not in the cart', () => {
+      service.addItem('cart-rm2', { productId: 'p1', quantity: 1 });
+      expect(() => service.removeItem('cart-rm2', 'p2')).toThrow(
+        NotFoundException,
+      );
     });
   });
 
