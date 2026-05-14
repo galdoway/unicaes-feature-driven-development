@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { CartService } from './cart.service';
 import { AddItemDto } from './dto/add-item.dto';
 import { Cart } from './entities/cart.entity';
@@ -19,6 +26,15 @@ export class CartController {
   @Post(':id/items')
   addItem(@Param('id') id: string, @Body() dto: AddItemDto): Cart {
     return this.cartService.addItem(id, dto);
+  }
+
+  /** FDD-11: Remove a product from the cart */
+  @Delete(':id/items/:productId')
+  removeItem(
+    @Param('id') id: string,
+    @Param('productId') productId: string,
+  ): Cart {
+    return this.cartService.removeItem(id, productId);
   }
 
   /** FDD-12: Calculate the subtotal of the cart */
